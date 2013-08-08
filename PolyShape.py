@@ -7,38 +7,42 @@ class Cell():
 
         Members
         -------
-        (i,j):  coordinates in two-dimensional space
-        t:      defines the neighbor/coordination type via lattice name
-
+        (i,j):      coordinates in two-dimensional space
+        lattice:    defines the neighbor/coordination type via lattice name
+        c:          color for checkerboard neighbor restrictions
         Methods
         -------
 
     '''
 
-    def __init__(self, i, j, lattice, start = False):
+    def __init__(self, i, j, lattice, c = None):
         '''
         '''
         self.i = i
         self.j = j
-        self.t = lattice
+        self.lattice = lattice
+        self.c = c
 
     def __str__(self):
         return "(" + str(self.i) + "," + str(self.j) + ")"
+
+    def get_type(self):
+        return self.lattice
 
     def neighbors(self, grid):
         '''
         '''
         valid_neighbors = []
-        vectors = self.neighbor_vectors(self.t)
+        vectors = self.neighbor_vectors()
 
         for v in vectors:
             i = self.i + v[0]
             j = self.j + v[1]
             if self.validate_grid(i, j, grid):
-                valid_neighbors.append( Cell(i, j, self.t) )
+                valid_neighbors.append( Cell(i, j, self.lattice, not self.c) )
                 grid[i][j] = False
         return valid_neighbors
- 
+    #private members below here 
     def validate_grid(self, i, j, grid):
         '''
         '''
@@ -49,17 +53,17 @@ class Cell():
                ( i < len(grid) ) and \
                ( i >= 0 )
 
-    def neighbor_vectors(self, lattice):
+    def neighbor_vectors(self):
         '''
         '''
-        if lattice == "polyomino":
+        if self.lattice == "polyomino":
             return [ ( 0,+1), (+1, 0), (-1, 0), ( 0,-1) ]
 
-        if lattice == "polyplet":
+        if self.lattice == "polyplet":
             return [ ( 0,+1), (+1,+1), (+1, 0), (+1,-1),\
                      ( 0,-1), (-1,-1), (-1, 0), (-1,+1) ]
 
-        if lattice == "polyhex":
+        if self.lattice == "polyhex":
             '''
             The lattice is mapped to a square lattice as follows...
 
@@ -73,20 +77,35 @@ class Cell():
             ''' 
             return [ ( 0,+1), (+1,+1), (+1, 0),\
                      ( 0,-1), (-1,-1), (-1, 0) ]
+
+        if self.lattice == "polyiamond":
+            if self.c:          #red
+                return [ ( 0,+1), (+1, 0), ( 0,-1) ]
+            else:               #white
+                return [ ( 0,+1), (-1, 0), ( 0,-1) ]
  
-def cell_template(lattice, N):
+def cell_template( cell, N):
     '''
     '''
     grid = []
 
+    template = cell.get_type()
+
     simple_square = ["polyomino", "polyplet", "polyhex"]
 
-    if lattice in simple_square:
+    if template in simple_square:
         for i in range(N):
             grid.append([True for j in range(2*N-1)])
         for j in range(N-1):
             grid[0][j] = False                
 
+        return grid
+    elif template == "polyiamond":                     #different than square?
+        for i in range(N):
+            grid.append([True for j in range(2*N-1)])
+        for j in range(N-2):
+            grid[0][j] = False
+        cell.c = True
         return grid
     else:
         print("ERROR: no valid shape\n")
@@ -106,9 +125,13 @@ class PolyShape():
         path = []
         stack = []
 
-        start = Cell(0, N-1, lattice, start = True)
+        self.big_list = []
 
-        grid = cell_template(lattice, N)
+
+        start = Cell(0, N-1, lattice)
+
+        grid = cell_template(start, N)
+
 
         stack.append(start)
         self.mark_grid(False, start, grid)
@@ -135,6 +158,7 @@ class PolyShape():
 
         if depth == self.N:
             self.count += 1
+            #self.big_list + path
             #self.show_path(path)
             path.pop()
             #self.visualize(grid)
@@ -147,6 +171,7 @@ class PolyShape():
             while low_stack:
                self.explore(low_stack, grid, path, depth)
             path.pop()
+            
             for each in new_neighbors:
                 self.mark_grid(True, each, grid)
 
