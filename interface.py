@@ -45,9 +45,3 @@ if __name__ == '__main__':
     print( iamond )
     print( iamond.get_count() )
 
-
-
-    print("hola")
-
-
-
