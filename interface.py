@@ -1,47 +1,49 @@
+import json
+import PolyShape_forked as ps
+import sys
+#import polyAnimate as pa
 
+def action_to_JSON(action):
 
+    action_dict = {}
+    
+    L = len(action)
 
+    command = action[0]
+    action_dict["event"] = command
+    #print action
+    if L == 2:
+        action_dict["info"] = [ str(x) for x in action[1] ]
 
-import PolyShape as ps
-
-
-
-
+    return action_dict
 
 if __name__ == '__main__':
 
-    N = 10
+    N = 5
+    name = "polyplet"
 
-    omino = ps.PolyShape("polyomino", N)
-    print( omino )
-    print( omino.get_count() )
+    if len(sys.argv) > 1:
+        N = int(sys.argv[1])
+    if len(sys.argv) > 2:
+        name = sys.argv[2]
 
-    plet = ps.PolyShape("polyplet", N)
-    print( plet )
-    print( plet.get_count() )
+    print( "Running with N={0} for {1} tiling.".format(N,name) )
 
-    yhex = ps.PolyShape("polyhex", N)
-    print( yhex )
-    print( yhex.get_count() )
+    graph = ps.PolyShape(name, N)
+    print( graph )
+    print( graph.get_count() )
 
-    if N > 5:
-        iamond = ps.PolyShape("polyiamond", N-4)
-        print( iamond )
-        print( iamond.get_count() )
+    fname = "stream{0}{1}.json".format(graph.N,graph.lattice)
+    print( "Algorithm log in {0}.".format(fname) )
 
-        iamond = ps.PolyShape("polyiamond", N-3)
-        print( iamond )
-        print( iamond.get_count() )
+    for each in graph.streamJSON():
+        print each
+    with open(fname,"w") as fobj:
+        fobj.write("var data = [\n")
+        fobj.write(",\n".join(graph.streamJSON()))
+        fobj.write("\n];")
 
-        iamond = ps.PolyShape("polyiamond", N-2)
-        print( iamond )
-        print( iamond.get_count() )
 
-        iamond = ps.PolyShape("polyiamond", N-1)
-        print( iamond )
-        print( iamond.get_count() )
 
-    iamond = ps.PolyShape("polyiamond", N)
-    print( iamond )
-    print( iamond.get_count() )
+
 
