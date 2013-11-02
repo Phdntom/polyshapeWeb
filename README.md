@@ -7,7 +7,7 @@ interface.py
 ------------
   Minimal script to make calls to the PolyShape class.
 
-PolyShape.py
+PolyShape[Web].py
 ------------
   Implements PolyShape class and Cell class for use with cell counting algorithm.
   
@@ -30,5 +30,9 @@ PolyShape.py
                         polyshape.big_list
               FALSE:    only provides a count of the graphs generated accessible via
                         polyshape.get_count()
-                        
-    
+/animate/polyWeb.js
+-------------------
+  Sets up a function wrapper for a polyShapeWeb animation using D3 (d3js.org)
+  
+/animate/polyWeb.html
+  Builds a basic page and pulls in a stream<N><Shape>.json file from PolyShapeWeb.py.
