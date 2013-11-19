@@ -148,7 +148,6 @@ class PolyShape():
             for col in enumerate(row[1],start=0):
                 list_grid.append( (row[0],col[0],col[1]))
 
-
         for each in list_grid:
             self.actions.append( (self.sim_time, (each[0],each[1]), "make", each[2]) )
             self.sim_time += 1

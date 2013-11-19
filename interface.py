@@ -1,21 +1,15 @@
 import json
-import PolyShape_forked as ps
+import PolyShape as ps
 import sys
 #import polyAnimate as pa
 
-def action_to_JSON(action):
-
-    action_dict = {}
-    
-    L = len(action)
-
-    command = action[0]
-    action_dict["event"] = command
-    #print action
-    if L == 2:
-        action_dict["info"] = [ str(x) for x in action[1] ]
-
-    return action_dict
+def encode(graph):
+    x = 0
+    y = 0
+    for n,cell in enumerate(graph):
+        x += cell.i * 10 ** n
+        y += cell.j * 10 ** n
+    return x,y
 
 if __name__ == '__main__':
 
@@ -29,20 +23,24 @@ if __name__ == '__main__':
 
     print( "Running with N={0} for {1} tiling.".format(N,name) )
 
-    graph = ps.PolyShape(name, N)
+    graph = ps.PolyShape(name, N, True)
     print( graph )
     print( graph.get_count() )
 
-    fname = "stream{0}{1}.json".format(graph.N,graph.lattice)
+    fname = "graph_log{0}{1}.txt".format(graph.N,graph.lattice)
     print( "Algorithm log in {0}.".format(fname) )
 
-    for each in graph.streamJSON():
-        print each
-    with open(fname,"w") as fobj:
-        fobj.write("var data = [\n")
-        fobj.write(",\n".join(graph.streamJSON()))
-        fobj.write("\n];")
+#    for each in graph.streamJSON():
+#        print each
 
+    for each in graph.big_list:
+
+        print [ (cell.i,cell.j) for cell in each], encode(each)
+    '''
+    with open(fname,"w") as fobj:
+        fobj.write(graph.get_count())
+        fobj.write("\n".join(graph.getKeyCode()))
+    '''
 
 
 

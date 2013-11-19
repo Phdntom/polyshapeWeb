@@ -121,7 +121,11 @@ class Cell():
             return None
 
 ### class Cell
+    
 
+
+
+### class Key
 class PolyShape():
     """A collection of cells on a lattice"""
 
@@ -148,14 +152,8 @@ class PolyShape():
             for col in enumerate(row[1],start=0):
                 list_grid.append( (row[0],col[0],col[1]))
 
-        self.actions.append( (self.sim_time, "grid", "make", [l for l in list_grid]) )
-        self.sim_time += 1
-
         stack.append(start)
         self.mark_grid(False, start, grid)
-        self.actions.append( (self.sim_time, "stack", "push", [start]) )
-        self.actions.append( (self.sim_time, "grid", "mark", (start,False) ) )
-        self.sim_time += 1
 
         depth = 0
         self.explore(stack, grid, path, depth)
@@ -188,6 +186,15 @@ class PolyShape():
         '''
         for action in self.actions:
             yield self.encodeJSONs(action)
+
+    def encode(graph):
+        for cell in graph:
+            pass
+
+
+    def genKeyCode(self):
+        for graph in self.big_list:
+            yield self.encode(graph)
 
     def encodeJSONs(self,action):
         time = action[0]
@@ -235,50 +242,33 @@ class PolyShape():
         path.append(v)
         depth += 1
 
-        self.actions.append( (self.sim_time, "stack", "pop", v) )
-        self.actions.append( (self.sim_time, "path", "push", v) )
-        self.sim_time += 1
-
         if depth == self.N:                     # stop if depth is N
             self.count += 1
             if self.store:
-                self.big_list + path
+                self.big_list.append( [c for c in path] )
             #self.show_path(path)
 
-            self.actions.append( (self.sim_time, "path", "show", [c for c in path]) )
-            self.sim_time += 1
             p = path.pop()
-            self.actions.append( (self.sim_time, "path", "pop", p) )
-            self.sim_time += 1
+
             #self.visualize(grid)
         else:
             new_neighbors = v.neighbors(grid)
-            self.actions.append( (self.sim_time, "grid", "neighbors", [n for n in new_neighbors]) )
-            self.sim_time += 1
 
             for each in new_neighbors:
                 self.mark_grid(False, each, grid)
-                self.actions.append( (self.sim_time, "grid", "mark", (each,False) ) )
-                self.sim_time += 1
 
             new_stack = stack + new_neighbors  # preserve stack for future
-            self.actions.append( (self.sim_time, "stack", "copy", [s for s in stack]) )
-            self.sim_time += 1
-            self.actions.append( (self.sim_time, "stack", "push", [n for n in new_neighbors]) )
-            self.sim_time += 1
 
             while new_stack:
                self.explore(new_stack, grid, path, depth)
 
             # the top cell in path is used up, remove it 
             p = path.pop()
-            self.actions.append( (self.sim_time, "path", "pop", p) )
+
             self.sim_time += 1
             # Mark neighbors used in this recursion available for future.
             for each in new_neighbors:
                 self.mark_grid(True, each, grid)
-                self.actions.append( (self.sim_time, "grid", "mark", (each, True) ) )
-                self.sim_time += 1
 
     def mark_grid(self, switch, cell, grid):
         '''

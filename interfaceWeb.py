@@ -1,21 +1,7 @@
 import json
-import PolyShape_forked as ps
+import PolyShapeWeb as ps
 import sys
 #import polyAnimate as pa
-
-def action_to_JSON(action):
-
-    action_dict = {}
-    
-    L = len(action)
-
-    command = action[0]
-    action_dict["event"] = command
-    #print action
-    if L == 2:
-        action_dict["info"] = [ str(x) for x in action[1] ]
-
-    return action_dict
 
 if __name__ == '__main__':
 
@@ -36,8 +22,8 @@ if __name__ == '__main__':
     fname = "stream{0}{1}.json".format(graph.N,graph.lattice)
     print( "Algorithm log in {0}.".format(fname) )
 
-    for each in graph.streamJSON():
-        print each
+#    for each in graph.streamJSON():
+#        print each
     with open(fname,"w") as fobj:
         fobj.write("var data = [\n")
         fobj.write(",\n".join(graph.streamJSON()))
