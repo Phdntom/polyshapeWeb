@@ -33,9 +33,8 @@ if __name__ == '__main__':
 #    for each in graph.streamJSON():
 #        print each
 
-    for each in graph.big_list:
-
-        print [ (cell.i,cell.j) for cell in each], encode(each)
+    #for each in graph.big_list:
+    #    print [ (cell.i,cell.j) for cell in each], encode(each)
     '''
     with open(fname,"w") as fobj:
         fobj.write(graph.get_count())

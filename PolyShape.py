@@ -191,7 +191,6 @@ class PolyShape():
         for cell in graph:
             pass
 
-
     def genKeyCode(self):
         for graph in self.big_list:
             yield self.encode(graph)
